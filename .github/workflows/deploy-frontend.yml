@@ -35,5 +35,5 @@ jobs:
             pnpm install
             pnpm run build
             sudo rm -rf /var/www/frontend/*
-            cp -R build/* /var/www/frontend/
+            cp -R dist/* /var/www/frontend/
             sudo systemctl restart apache2
