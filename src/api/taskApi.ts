@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Task } from '../types/Task';
 
-const API_URL = 'http://localhost:3000/tasks';  // Change this when deploying
+const API_URL = 'http://54.85.34.222:3000/tasks';  // Change this when deploying
 
 export const fetchTasks = async (): Promise<Task[]> => {
   try {
