@@ -21,11 +21,6 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: '10.6.3'
-      - name: Install Dependencies
-        run: pnpm install
-
-      - name: Build Frontend
-        run: pnpm run build
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.6
@@ -34,6 +29,11 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd Todo-Frontend
+            git reset --hard
+            git pull origin main
+            pnpm install
+            pnpm run build
             sudo rm -rf /var/www/frontend/*
-            cp -R $(pwd)/build/* /var/www/frontend/
+            cp -R build/* /var/www/frontend/
             sudo systemctl restart apache2
