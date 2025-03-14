@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Task } from './types/Task';
 import TaskList from './components/TaskList';
 import { fetchTasks, addTask, deleteTask } from './api/taskApi';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 const SOCKET_URL = "http://54.85.34.222:3000";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState('');
-  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -18,27 +17,26 @@ const App: React.FC = () => {
     };
     loadTasks();
 
-    // Initialize WebSocket connection inside useEffect
-    const newSocket = io(SOCKET_URL, { transports: ['websocket'] });
-    setSocket(newSocket);
+    // Directly create WebSocket connection inside useEffect
+    const socket = io(SOCKET_URL, { transports: ['websocket'] });
 
-    // Listen for task updates
-    newSocket.on('tasksUpdated', (updatedTasks: Task[]) => {
+    // Listen for WebSocket updates
+    socket.on('tasksUpdated', (updatedTasks: Task[]) => {
       console.log('Received update from WebSocket:', updatedTasks);
       setTasks(updatedTasks);
     });
 
-    // Cleanup function to close socket and remove listeners on unmount
+    // Cleanup function to remove listeners & close socket
     return () => {
-      newSocket.off('tasksUpdated'); // Remove listener
-      newSocket.disconnect(); // Close connection
+      socket.off('tasksUpdated'); // Remove WebSocket listener
+      socket.disconnect(); // Close WebSocket connection
     };
   }, []);
 
   const handleAddTask = async () => {
     if (title.trim() === '') return;
     await addTask(title);
-    setTitle(''); // No need to manually update, WebSocket will handle it
+    setTitle(''); // No need to manually update state, WebSocket will handle it
   };
 
   const handleDeleteTask = async (id: string) => {
