@@ -4,7 +4,7 @@ import TaskList from './components/TaskList';
 import { fetchTasks, addTask, deleteTask } from './api/taskApi';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = "http://54.85.34.222:3000/";
+const SOCKET_URL = "http://54.85.34.222:3000";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
